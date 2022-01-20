@@ -14,8 +14,20 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Character.init({
-    image: DataTypes.TEXT,
-    name: DataTypes.STRING,
+    image: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: {
+          msg: 'El nombre no puede ser un campo vacío'
+        }
+      }
+    },
     age: DataTypes.INTEGER,
     weight: DataTypes.INTEGER,
     story: DataTypes.TEXT

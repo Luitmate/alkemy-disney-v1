@@ -14,7 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Genre.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'El nombre del genero no puede ser un campo vacío'
+        }
+      }
+    },
     image: DataTypes.TEXT
   }, {
     sequelize,

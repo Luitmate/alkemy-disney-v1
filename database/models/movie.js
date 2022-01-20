@@ -14,10 +14,32 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Movie.init({
-    image: DataTypes.TEXT,
-    title: DataTypes.STRING,
-    creationDate: DataTypes.DATEONLY,
-    rating: DataTypes.INTEGER
+    image: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: {
+          msg: 'El titulo no puede ser un campo vacío'
+        }
+      }
+    },
+    releaseYear: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    ratingIMDB: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min : 1,
+        max: 5,
+      }
+    }
   }, {
     sequelize,
     tableName: 'movies',
