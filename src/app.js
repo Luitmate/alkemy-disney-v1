@@ -1,6 +1,6 @@
 const express = require('express')
 const res = require('express/lib/response')
-const sequelize = require('sequelize')
+const { sequelize } = require('../database/models')
 const app = express()
 
 const PORT = process.env.PORT || 3000
@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, async() => {
   console.log(`Example app listening at http://localhost:${PORT}`)
   try {
-    await sequelize.authenticate()
+    await sequelize.sync()
     console.log("Se estableció la conexión on la base de datos")
   } catch (error) {
       console.log(error)  
