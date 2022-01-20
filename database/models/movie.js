@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     rating: DataTypes.INTEGER
   }, {
     sequelize,
+    tableName: 'movies',
     modelName: 'Movie',
   });
   return Movie;

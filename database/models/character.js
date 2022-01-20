@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     story: DataTypes.TEXT
   }, {
     sequelize,
+    tableName: 'characters',
     modelName: 'Character',
   });
   return Character;

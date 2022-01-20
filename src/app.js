@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, async() => {
   console.log(`Example app listening at http://localhost:${PORT}`)
   try {
-    await sequelize.sync()
+    await sequelize.sync( { force: true })
     console.log("Se estableció la conexión on la base de datos")
   } catch (error) {
       console.log(error)  

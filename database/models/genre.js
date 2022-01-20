@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.TEXT
   }, {
     sequelize,
+    tableName: 'genres',
     modelName: 'Genre',
   });
   return Genre;
