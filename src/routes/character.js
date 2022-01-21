@@ -1,16 +1,90 @@
 const express = require('express')
 const router = express.Router()
 
-const { Character } = require('../../database/models')
+const { Character, Movie } = require('../../database/models')
+
+const { Sequelize } = require('sequelize')
+const Op = Sequelize.Op
 
 // GET ALL
 router.get('/characters', async (req, res) => {
-    const allCharacters = await Character.findAll({
+    const { name, age, weight, movies } = req.query
+    if (!name && !age && !weight && !movies) {
+        const allCharacters = await Character.findAll({
         attributes: ['image', 'name']
-    })
-    return res.json(allCharacters)
+        })
+        return res.json(allCharacters)
+    }
+    if (name) {
+        const searchName = await Character.findAll({
+            where: {
+                name: {
+                    [Op.substring]: name
+                }
+            },
+            attributes: ['image', 'name'],
+            include: [{
+                model: Movie,
+                as: 'movies',
+                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                through: {
+                    attributes: []
+                }
+            }] 
+        })
+        return res.json(searchName)
+    } else if (age) {
+        const searchByAge = await Character.findAll({
+            where: {
+                age: age
+            },
+            attributes: ['image', 'name'],
+            include: [{
+                model: Movie,
+                as: 'movies',
+                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                through: {
+                    attributes: []
+                }
+            }]
+        })
+        return res.json(searchByAge)
+    } else if (weight) {
+        const searchByWeight = await Character.findAll({
+            where: {
+                weight: weight
+            },
+            attributes: ['image', 'name'],
+            include: [{
+                model: Movie,
+                as: 'movies',
+                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                through: {
+                    attributes: [],
+                }
+            }]
+        })
+        return res.json(searchByWeight)
+    } else if (movies) {
+        const searchByMovies = await Character.findAll({
+          attributes: ['name', 'image'],
+          include: [
+            {
+              model: Movie,
+              as: 'movies',
+              through: {
+                attributes: []
+              },
+              where: {
+                id: movies
+              },
+              attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+            }
+          ]
+        })  
+        return res.json(searchByMovies)
+    }
 })
-
 
 // GET ONE BY PK
 router.get('/characters/:id', async (req, res) => {

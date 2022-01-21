@@ -55,7 +55,7 @@ module.exports = {
     let characterArray = [{
       id: 1,
       image: "https://robohash.org/consecteturporrorerum.jpg?size=400x300&set=set1",
-      name: "Robert Downey Jr.",
+      name: "Robert Downey",
       age: 56,
       weight: 80,
       story: "In congue. Etiam justo. Etiam pretium iaculis justo. Etiam faucibus cursus urna. Ut tellus. Nulla ut erat id mauris vulputate elementum.",
