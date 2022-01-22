@@ -3,13 +3,53 @@ const router = express.Router()
 
 const { Movie } = require('../../database/models')
 
+const { Sequelize } = require('sequelize')
+const Op = Sequelize.Op
+
 // GET ALL
 router.get('/movies', async (req, res) => {
-    const allMovies = await Movie.findAll({
-        attributes: ['image', 'title', 'releaseYear']
-    })
-    return res.json(allMovies)
+    const { name, genre, order } = req.query
+    if(!name && !genre && !order ) {
+        const allMovies = await Movie.findAll({
+            attributes: ['image', 'title', 'releaseYear']
+        })
+        return res.json(allMovies)
+    }
+    if (name) {
+        const searchByName = await Movie.findAll({
+            where: {
+                title: {
+                    [Op.substring]: name
+                }
+            },
+            attributes: ['image', 'title', 'releaseYear', 'ratingIMDB']
+        })
+        return res.json(searchByName)
+    } else if(genre) {
+        const searchByGenre = await Movie.findAll({
+            where: {
+                GenreId: genre
+            },
+            attributes: ['image', 'title', 'releaseYear']
+        })
+        return res.json(searchByGenre)
+    } else if (order) {
+        if( order === 'ASC' || order === 'DESC') {
+            const searchByOrder = await Movie.findAll({
+                order: [
+                    ['releaseYear', order]
+                ],
+                attributes: ['image', 'title', 'releaseYear'] 
+            })
+            return res.json(searchByOrder)
+        } else {
+            throw Error('Solo se pueden utilizar las opciones ASC y DESC')
+        }
+        
+    }
 })
+    
+
 
 
 // GET ONE BY PK
