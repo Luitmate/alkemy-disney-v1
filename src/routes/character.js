@@ -11,7 +11,17 @@ router.get('/characters', async (req, res) => {
     const { name, age, weight, movies } = req.query
     if (!name && !age && !weight && !movies) {
         const allCharacters = await Character.findAll({
-        attributes: ['image', 'name']
+        attributes: {
+            exclude: 'id'
+        },
+        include: [{
+            model: Movie,
+            as: 'movies',
+            attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+            through: {
+                attributes: []
+            }
+        }]
         })
         return res.json(allCharacters)
     }

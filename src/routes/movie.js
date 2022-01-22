@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { Movie } = require('../../database/models')
+const { Movie, Character, Genre } = require('../../database/models')
 
 const { Sequelize } = require('sequelize')
 const Op = Sequelize.Op
@@ -11,7 +11,17 @@ router.get('/movies', async (req, res) => {
     const { name, genre, order } = req.query
     if(!name && !genre && !order ) {
         const allMovies = await Movie.findAll({
-            attributes: ['image', 'title', 'releaseYear']
+            attributes: {
+                exclude: ['id', 'GenreId']
+            },
+            include: [{
+                model: Character,
+                as: 'characters',
+                attributes: ['image', 'name'],
+                through: {
+                    attributes: []
+                }
+            }]
         })
         return res.json(allMovies)
     }
