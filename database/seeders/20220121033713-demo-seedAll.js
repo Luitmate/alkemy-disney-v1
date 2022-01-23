@@ -2,6 +2,25 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
+    
+    let userArray = [{
+      id: 1,
+      email: 'lucas1@gmail.com',
+      password: 'lucaspassword1'
+    }, {
+      id: 2,
+      email: 'lucas2@gmail.com',
+      password: 'lucaspassword2'
+    }, {
+      id: 3,
+      email: 'lucas3@gmail.com',
+      password: 'lucaspassword3'
+    }, {
+      id: 4,
+      email: 'lucas4@gmail.com',
+      password: 'lucaspassword4'
+    }
+  ]
 
     let genreArray = [{
       id: 11,
@@ -99,16 +118,21 @@ module.exports = {
       MovieId: 103
     }] 
 
+     await queryInterface.bulkInsert('users', userArray, {});
      await queryInterface.bulkInsert('genres', genreArray, {});
      await queryInterface.bulkInsert('movies', movieArray, {});
      await queryInterface.bulkInsert('characters', characterArray, {});
      await queryInterface.bulkInsert('characterMovies', associationsArray, {});
+     
   },
 
   async down (queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('users', null, {});
     await queryInterface.bulkDelete('genres', null, {});
     await queryInterface.bulkDelete('movies', null, {});
     await queryInterface.bulkDelete('characters', null, {});
     await queryInterface.bulkDelete('characterMovies', null, {});
+    
+
   }
 };
