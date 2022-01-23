@@ -17,7 +17,8 @@ router.post('/login', async (req, res) => {
     })
     const check = passwordComparison(user.password, password)
     if(check) {
-        res.json(`Bienvenido ${user.email}`)
+        const token = jwt.sign(user.id, process.env.ACCESS_JWT_TOKEN)
+        res.json(token)
     } else {
         res.json('Datos invalidos')
     }
