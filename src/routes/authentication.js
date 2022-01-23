@@ -12,24 +12,33 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body
     const user = await User.findOne({
         where: {
-            email
+            email: email
         }
     })
-    const accessToken = jwt.sign(email, process.env.ACCESS_JWT_TOKEN)
-    res.json(accessToken)
-})
-
-
-router.post('/register', async (req, res) => {
-    try {
-        const { email, password } = req.body
-        const encryptedPassword = await bcrypt.hash(password, 10)
-        const newUser = await User.create({ email: email, password: encryptedPassword })
-        return res.json(newUser)
-    } catch (error) {
-        res.status(500).json(error)
+    const check = passwordComparison(user.password, password)
+    if(check) {
+        res.json(`Bienvenido ${user.email}`)
+    } else {
+        res.json('Datos invalidos')
     }
 })
+
+router.post('/register', async (req, res) => {
+    const { email, password } = req.body
+    const passwordEncrypted = await passwordEncryption(password)
+    const newUser = User.create({ email, password: passwordEncrypted })
+    return res.json(newUser)
+})
+
+const passwordEncryption = async (passwordPlain) => {
+    return await bcrypt.hash(passwordPlain, 10)
+}
+
+const passwordComparison = async (userPassword, passwordInput) => {
+    return await bcrypt.compare(passwordInput, userPassword)
+}
+
+
 
 /*
 function authenticateToken(req, res, next) {
