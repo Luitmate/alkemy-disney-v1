@@ -1,48 +1,12 @@
 const express = require('express')
 const router = express.Router()
 
-const bcrypt = require('bcrypt')
+const { loginUser, registerUser } = require('../controllers/authentication')
 
-const jwt = require('jsonwebtoken')
-require('dotenv').config()
 
-const emailService = require('../../emailService')
+router.post('/login', loginUser)
 
-const { User } = require('../../database/models')
-
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body
-    const user = await User.findOne({
-        where: {
-            email: email
-        }
-    })
-    const check = passwordComparison(user.password, password)
-    if(check) {
-        const token = jwt.sign(user.id, process.env.ACCESS_JWT_TOKEN)
-        res.json(token)
-    } else {
-        res.json('Datos invalidos')
-    }
-})
-
-router.post('/register', async (req, res) => {
-    const { email, password } = req.body
-    const passwordEncrypted = await passwordEncryption(password)
-    const newUser = User.create({ email, password: passwordEncrypted })
-    emailService(email)
-    return res.json(newUser)
-
-})
-
-const passwordEncryption = async (passwordPlain) => {
-    return await bcrypt.hash(passwordPlain, 10)
-}
-
-const passwordComparison = async (userPassword, passwordInput) => {
-    return await bcrypt.compare(passwordInput, userPassword)
-}
-
+router.post('/register', registerUser)
 
 
 /*
