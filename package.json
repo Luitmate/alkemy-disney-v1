@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Lukitmate/alkemy-disney-v1#readme",
   "dependencies": {
+    "@sendgrid/mail": "^7.6.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",

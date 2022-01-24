@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
+const emailService = require('../../emailService')
+
 const { User } = require('../../database/models')
 
 router.post('/login', async (req, res) => {
@@ -28,7 +30,9 @@ router.post('/register', async (req, res) => {
     const { email, password } = req.body
     const passwordEncrypted = await passwordEncryption(password)
     const newUser = User.create({ email, password: passwordEncrypted })
+    emailService(email)
     return res.json(newUser)
+
 })
 
 const passwordEncryption = async (passwordPlain) => {
