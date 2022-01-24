@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/v1', characterRoutes)
 app.use('/api/v1', movieRoutes)
-app.use('/auth', authenticationRoutes)
+app.use('/api/v1/auth', authenticationRoutes)
 
 
 app.listen(PORT, async() => {
