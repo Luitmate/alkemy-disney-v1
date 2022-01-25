@@ -8,55 +8,58 @@ const ExpressError = require('../utils/ExpressError')
 
 exports.getAllMovies = async (req, res) => {
     const { name, genre, order } = req.query
-    if(!name && !genre && !order ) {
-        const allMovies = await Movie.findAll({
-            attributes: {
-                exclude: ['id', 'GenreId']
-            },
-            include: [{
-                model: Character,
-                as: 'characters',
-                attributes: ['image', 'name'],
-                through: {
-                    attributes: []
-                }
-            }]
-        })
-        return res.json(allMovies)
-    }
-    if (name) {
-        const searchByName = await Movie.findAll({
-            where: {
-                title: {
-                    [Op.substring]: name
-                }
-            },
-            attributes: ['image', 'title', 'releaseYear', 'ratingIMDB']
-        })
-        return res.json(searchByName)
-    } else if(genre) {
-        const searchByGenre = await Movie.findAll({
-            where: {
-                GenreId: genre
-            },
-            attributes: ['image', 'title', 'releaseYear']
-        })
-        return res.json(searchByGenre)
-    } else if (order) {
-        if( order === 'ASC' || order === 'DESC') {
-            const searchByOrder = await Movie.findAll({
-                order: [
-                    ['releaseYear', order]
-                ],
-                attributes: ['image', 'title', 'releaseYear'] 
+    if (name || genre || order) {
+        if(name) {
+            const searchByName = await Movie.findAll({
+                where: {
+                    title: {
+                        [Op.substring]: name
+                    }
+                },
+                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB']
             })
-            return res.json(searchByOrder)
-        } else {
-            throw Error('Solo se pueden utilizar las opciones ASC y DESC')
-        }    
-    }
+            return res.json(searchByName)
+        } else if(genre) {
+            const searchByGenre = await Movie.findAll({
+                where: {
+                    GenreId: genre
+                },
+                attributes: ['image', 'title', 'releaseYear']
+            })
+            return res.json(searchByGenre)
+        } else if (order) {
+            if( order === 'ASC' || order === 'DESC') {
+                const searchByOrder = await Movie.findAll({
+                    order: [
+                        ['releaseYear', order]
+                    ],
+                    attributes: ['image', 'title', 'releaseYear'] 
+                })
+                return res.json(searchByOrder)
+            } else {
+                throw Error('Solo se pueden utilizar las opciones ASC y DESC')
+            }
+        }
+    } else {
+        if(!name && !genre && !order ) {
+            const allMovies = await Movie.findAll({
+                attributes: {
+                    exclude: ['id', 'GenreId']
+                },
+                include: [{
+                    model: Character,
+                    as: 'characters',
+                    attributes: ['image', 'name'],
+                    through: {
+                        attributes: []
+                    }
+                }]
+            })
+            return res.json(allMovies)
+        }
+    } 
 }
- 
+
 exports.getOneMovie = catchAsync(async (req, res, next) => {
     const { id } = req.params
     if(!id) throw new ExpressError('No se ha encontrado el film', 400)

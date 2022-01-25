@@ -8,90 +8,93 @@ const ExpressError = require('../utils/ExpressError')
 
 exports.getAllCharacters = async (req, res) => {
     const { name, age, weight, movies } = req.query
-    if (!name && !age && !weight && !movies) {
-        const allCharacters = await Character.findAll({
-        attributes: {
-            exclude: 'id'
-        },
-        include: [{
-            model: Movie,
-            as: 'movies',
-            attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
-            through: {
-                attributes: []
-            }
-        }]
-        })
-        return res.json(allCharacters)
-    }
-    if (name) {
-        const searchName = await Character.findAll({
-            where: {
-                name: {
-                    [Op.substring]: name
-                }
-            },
-            attributes: ['image', 'name'],
-            include: [{
-                model: Movie,
-                as: 'movies',
-                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
-                through: {
-                    attributes: []
-                }
-            }] 
-        })
-        return res.json(searchName)
-    } else if (age) {
-        const searchByAge = await Character.findAll({
-            where: {
-                age: age
-            },
-            attributes: ['image', 'name'],
-            include: [{
-                model: Movie,
-                as: 'movies',
-                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
-                through: {
-                    attributes: []
-                }
-            }]
-        })
-        return res.json(searchByAge)
-    } else if (weight) {
-        const searchByWeight = await Character.findAll({
-            where: {
-                weight: weight
-            },
-            attributes: ['image', 'name'],
-            include: [{
-                model: Movie,
-                as: 'movies',
-                attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
-                through: {
-                    attributes: [],
-                }
-            }]
-        })
-        return res.json(searchByWeight)
-    } else if (movies) {
-        const searchByMovies = await Character.findAll({
-          attributes: ['name', 'image'],
-          include: [
-            {
-              model: Movie,
-              as: 'movies',
-              through: {
-                attributes: []
-              },
-              where: {
-                id: movies
-              },
-              attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
-            }
-          ]
-        })  
-        return res.json(searchByMovies)
+    if(name || age || weight || movies) {
+        if (name) {
+            const searchName = await Character.findAll({
+                where: {
+                    name: {
+                        [Op.substring]: name
+                    }
+                },
+                attributes: ['image', 'name'],
+                include: [{
+                    model: Movie,
+                    as: 'movies',
+                    attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                    through: {
+                        attributes: []
+                    }
+                }] 
+            })
+            return res.json(searchName)
+        } else if (age) {
+            const searchByAge = await Character.findAll({
+                where: {
+                    age: age
+                },
+                attributes: ['image', 'name'],
+                include: [{
+                    model: Movie,
+                    as: 'movies',
+                    attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                    through: {
+                        attributes: []
+                    }
+                }]
+            })
+            return res.json(searchByAge)
+        } else if (weight) {
+            const searchByWeight = await Character.findAll({
+                where: {
+                    weight: weight
+                },
+                attributes: ['image', 'name'],
+                include: [{
+                    model: Movie,
+                    as: 'movies',
+                    attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                    through: {
+                        attributes: [],
+                    }
+                }]
+            })
+            return res.json(searchByWeight)
+        } else if (movies) {
+            const searchByMovies = await Character.findAll({
+                attributes: ['name', 'image'],
+                include: [
+                  {
+                    model: Movie,
+                    as: 'movies',
+                    through: {
+                      attributes: []
+                    },
+                    where: {
+                      id: movies
+                    },
+                    attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                  }
+                ]
+              })  
+              return res.json(searchByMovies)
+        }       
+    } else {
+        if (!name && !age && !weight && !movies) {
+            const allCharacters = await Character.findAll({
+                attributes: {
+                    exclude: 'id'
+                },
+                include: [{
+                    model: Movie,
+                    as: 'movies',
+                    attributes: ['image', 'title', 'releaseYear', 'ratingIMDB'],
+                    through: {
+                        attributes: []
+                    }
+                }]
+                })
+                return res.json(allCharacters)
+        } 
     }
 }
 
