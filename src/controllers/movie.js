@@ -3,6 +3,23 @@ const { Movie, Character } = require('../../database/models')
 const { Sequelize } = require('sequelize')
 const Op = Sequelize.Op
 
+const catchAsync = require('../utils/catchAsync')
+const ExpressError = require('../utils/ExpressError')
+
+/* cambiar 
+if (name || genre || order) {
+    if(name) {
+        ...
+    } else if(genre) {
+        ...
+    } else if () {
+        ....
+    }
+} else {
+    ....
+}
+*/
+
 exports.getAllMovies = async (req, res) => {
     const { name, genre, order } = req.query
     if(!name && !genre && !order ) {
@@ -55,61 +72,42 @@ exports.getAllMovies = async (req, res) => {
     }
 }
 
-exports.getOneMovie = async (req, res) => {
-    try {
-        const { id } = req.params
-        const oneMovie = await Movie.findByPk(id)
-        return res.json(oneMovie)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
+exports.getOneMovie = catchAsync(async (req, res, next) => {
+    const { id } = req.params
+    if(!id) throw new ExpressError('No se ha encontrado el film', 400)
+    const oneMovie = await Movie.findByPk(id)
+    return res.json(oneMovie)
+})
 
-exports.createOneMovie = async (req, res) => {
-    try {
-        const { image, title, releaseYear, ratingIMDB, GenreId } = req.body
-        const newMovie = await Movie.create({ image, title, releaseYear, ratingIMDB, GenreId })
-        return res.json(newMovie)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
+exports.createOneMovie = catchAsync(async (req, res) => {
+    const { image, title, releaseYear, ratingIMDB, GenreId } = req.body
+    if(!image || !title || !releaseYear || !ratingIMDB || !GenreId) throw new ExpressError('Existen campos sin completar', 400)
+    const newMovie = await Movie.create({ image, title, releaseYear, ratingIMDB, GenreId })
+    return res.json(newMovie)
+    
+})
 
-exports.updateOneMovie = async (req, res) => {
-    try {
-        const { id } = req.params
-        const { image, title, releaseYear,  ratingIMDB, GenreId } = req.body
-        const editMovie = await Movie.update({ image, title, releaseYear,  ratingIMDB, GenreId }, { where: { id }})
-        return res.json(editMovie)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
+exports.updateOneMovie = catchAsync(async (req, res) => {
+    const { id } = req.params
+    const { image, title, releaseYear,  ratingIMDB, GenreId } = req.body
+    if(!id) throw new ExpressError('No se ha encontrado el film', 400)
+    if(!image || !title || !releaseYear || !ratingIMDB || GenreId) throw new ExpressError('Existen campos sin completar', 400)
+    const editMovie = await Movie.update({ image, title, releaseYear,  ratingIMDB, GenreId }, { where: { id }})
+    return res.json(editMovie)
+})
 
-exports.deleteOneMovie = async(req, res) => {
-    try {
-        const { id } = req.params
-        const deleteMovie = await Movie.destroy({
-            where: { id }
-        })
-        return res.json(deleteMovie)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
+exports.deleteOneMovie = catchAsync(async(req, res) => {
+    const { id } = req.params
+    if(!id) throw new ExpressError('No se ha encontrado el film', 400)
+    const deleteMovie = await Movie.destroy({
+        where: { id }
+    })
+    return res.json(deleteMovie)    
+})
 
-exports.deleteAllMovie = async(req, res) => {
-    try {
-        const deleteAllMovies = await Movie.destroy({
-            truncate : { cascade: true}
-        })
-        return res.json(deleteAllMovies)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
+exports.deleteAllMovie = catchAsync(async(req, res) => {
+    const deleteAllMovies = await Movie.destroy({
+        truncate : { cascade: true}
+    })
+    return res.json(deleteAllMovies)    
+})
