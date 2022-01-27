@@ -19,6 +19,7 @@ exports.loginUser = catchAsync(async (req, res) => {
     const check = passwordComparison(user.password, password)
     if(check) {
         const token = signToken(user.id, process.env.ACCESS_JWT_TOKEN)
+        res.json('Bienvenido')
         return (token)
     } else {
         throw new ExpressError('Datos inválidos', 401)
