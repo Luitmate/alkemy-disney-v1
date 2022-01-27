@@ -19,7 +19,7 @@ exports.loginUser = catchAsync(async (req, res) => {
     const check = passwordComparison(user.password, password)
     if(check) {
         const token = signToken(user.id, process.env.ACCESS_JWT_TOKEN)
-        res.json('Bienvenido')
+        res.json(token)
         return (token)
     } else {
         throw new ExpressError('Datos inválidos', 401)
@@ -41,7 +41,7 @@ exports.registerUser = catchAsync(async (req, res) => {
         const newUser = await User.create({ email, password: passwordEncrypted })
         const token = signToken(newUser.id, process.env.ACCESS_JWT_TOKEN)
         await emailService(email)
-        res.json('Bienvenido')
+        res.json(token)
         return (token)
     }
 })
